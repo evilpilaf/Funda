@@ -11,6 +11,7 @@ namespace FundaWebApiServiceAdapter.Dtos
 {
     internal class QueryResultDto
     {
+        [JsonProperty("Objects")]
         public List<ListingDto> Listings { get; set; }
 
         [JsonProperty("Paging")]
