@@ -14,7 +14,7 @@ namespace FundaWebApiServiceAdapter
     internal sealed class FundaWebApiService : IFundaApiService
     {
         private readonly HttpClient _client;
-        private const string apiKey = "";
+        private const string apiKey = " ";
 
         public FundaWebApiService(HttpClient client)
         {
