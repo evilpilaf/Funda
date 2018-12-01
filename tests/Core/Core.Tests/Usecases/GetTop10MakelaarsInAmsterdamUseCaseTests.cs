@@ -40,7 +40,45 @@ namespace Core.Tests.Usecases
             result.Should().ContainSingle().Which.Should().Be(makelaarOne);
         }
 
-        private IEnumerable<Listing> CreateListingsForMakelaar(Makelaar makelaar, int count)
+        [Theory]
+        [InlineData(new[] {10, 80, 200, 500, 54, 1000, 23, 57, 1231, 345321, 1, 23, 786})]
+        [InlineData(new[] {30, 45, 23, 12})]
+        [InlineData(new[] {46, 7, 12, 100, 3, 55, 8})]
+        public async Task Execute_WhenServiceCallSucceeded_WithMoreThan10Makelaars_ReturnsOnlyTop10Sorted(int[] listingsPerMakelaar)
+        {
+            var listings = new List<Listing>();
+            var makelaars = new Dictionary<int, Makelaar>();
+
+            foreach (var numberOfListings in listingsPerMakelaar)
+            {
+                var buildResult = Build(numberOfListings, numberOfListings);
+                listings.AddRange(buildResult.Item2);
+                makelaars[numberOfListings] = buildResult.Item1;
+            }
+
+            IEnumerable<Makelaar> sortedMakelaars = makelaars.OrderByDescending(m => m.Key)
+                                                             .Take(10)
+                                                             .Select(m => m.Value);
+
+            _fundaApiServiceMock.Setup(m => m.GetAllListings())
+                                .ReturnsAsync(listings);
+
+            GetTop10MakelaarsInAmsterdamUseCase sut = CreateSut();
+
+            IEnumerable<Makelaar> result = await sut.Execute();
+
+            result.Should().HaveCountLessOrEqualTo(10);
+            result.Should().ContainInOrder(sortedMakelaars);
+        }
+
+        private Tuple<Makelaar, IEnumerable<Listing>> Build(int makelaarId, int numberOfListings)
+        {
+            var makelaar = new Makelaar(makelaarId, makelaarId.ToString());
+            IEnumerable<Listing> listings = CreateListingsForMakelaar(makelaar, numberOfListings);
+            return new Tuple<Makelaar, IEnumerable<Listing>>(makelaar, listings);
+        }
+
+        private static IEnumerable<Listing> CreateListingsForMakelaar(Makelaar makelaar, int count)
         {
             for (int i = 0; i < count; i++)
             {
