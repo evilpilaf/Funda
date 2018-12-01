@@ -21,14 +21,14 @@ namespace Funda.Core.Usecases
             IEnumerable<Listing> listings = await _fundaApiService.GetAllListings();
 
             return listings.GroupBy(l => l.Makelaar)
-                                              .Select(group => new
-                                              {
-                                                  Makelaar = group.Key,
-                                                  TotalListings = group.Count()
-                                              })
-                                              .OrderByDescending(r => r.TotalListings)
-                                              .Take(10)
-                                              .Select(g => g.Makelaar);
+                           .Select(group => new
+                           {
+                               Makelaar = group.Key,
+                               TotalListings = group.Count()
+                           })
+                           .OrderByDescending(r => r.TotalListings)
+                           .Take(10)
+                           .Select(g => g.Makelaar);
         }
     }
 }
