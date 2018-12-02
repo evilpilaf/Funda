@@ -30,7 +30,7 @@ namespace Core.Tests.Usecases
             var makelaarOne = new Makelaar(1, "makelaarOne");
             IEnumerable<Listing> listings = CreateListingsForMakelaar(makelaarOne, 40);
 
-            _fundaApiServiceMock.Setup(m => m.GetAllListings())
+            _fundaApiServiceMock.Setup(m => m.GetAllListings("Amsterdam", false))
                                 .ReturnsAsync(listings);
 
             GetTop10MakelaarsInAmsterdamUseCase sut = CreateSut();
@@ -60,7 +60,7 @@ namespace Core.Tests.Usecases
                                                                          .Take(10)
                                                                          .Select(m => new Tuple<Makelaar, int>(m.Value, m.Key));
 
-            _fundaApiServiceMock.Setup(m => m.GetAllListings())
+            _fundaApiServiceMock.Setup(m => m.GetAllListings("Amsterdam", false))
                                 .ReturnsAsync(listings);
 
             GetTop10MakelaarsInAmsterdamUseCase sut = CreateSut();

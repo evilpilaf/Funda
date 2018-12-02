@@ -25,17 +25,23 @@ namespace FundaWebApiServiceAdapter
             _client = client;
         }
 
-        public async Task<IEnumerable<Listing>> GetAllListings()
+        public async Task<IEnumerable<Listing>> GetAllListings(string city, bool withTuin)
         {
             var pageNumber = 0;
             var listings = new List<Listing>();
             QueryResultDto content;
+            
+            const string baseUri = "type=#TYPE#&zo=/#CITY#/#WITHTUIN#/";
+
+            var uri = baseUri.Replace("#TYPE#", "koop")
+                             .Replace("#CITY#", city)
+                             .Replace("#WITHTUIN#", withTuin ? "tuin" : string.Empty);
 
             do
             {
-                string uri = $"?type=koop&zo=/amsterdam/tuin/page={++pageNumber}&pagesize=25";
+                string url = $"?{uri}&page={++pageNumber}&pagesize=25";
 
-                content = await ExecuteQuery(uri);
+                content = await ExecuteQuery(url);
 
                 listings.AddRange(content.Listings.Select(l => l.ToEntity()));
             } while (pageNumber < content.PagingDto.AantalPaginas);

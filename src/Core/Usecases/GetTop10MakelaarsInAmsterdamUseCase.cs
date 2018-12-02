@@ -19,7 +19,7 @@ namespace Funda.Core.Usecases
 
         public async Task<IEnumerable<Tuple<Makelaar, int>>> Execute()
         {
-            IEnumerable<Listing> listings = await _fundaApiService.GetAllListings();
+            IEnumerable<Listing> listings = await _fundaApiService.GetAllListings("Amsterdam", false);
 
             return listings.GroupBy(l => l.Makelaar)
                            .Select(group => new

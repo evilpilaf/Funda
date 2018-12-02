@@ -7,6 +7,6 @@ namespace Funda.Core.Repositories
 {
     public interface IFundaApiService
     {
-        Task<IEnumerable<Listing>> GetAllListings();
+        Task<IEnumerable<Listing>> GetAllListings(string city, bool withTuin);
     }
 }
