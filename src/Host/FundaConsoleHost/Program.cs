@@ -23,14 +23,23 @@ namespace FundaConsoleHost
             ServiceProvider serviceProvider = new ServiceCollection()
                                               .AddLogging(loggingBuilder => loggingBuilder.AddSerilog(log))
                                               .AddScoped<GetTop10MakelaarsInAmsterdamUseCase>()
+                                              .AddScoped<GetTop10AmsterdamMakelaarsWithTuinUseCase>()
                                               .RegisterWebApiServiceAdapter()
                                               .BuildServiceProvider();
 
             using (IServiceScope scope = serviceProvider.CreateScope())
             {
-                var useCase = scope.ServiceProvider.GetService<GetTop10MakelaarsInAmsterdamUseCase>();
+                var allListingsUseCase = scope.ServiceProvider.GetService<GetTop10MakelaarsInAmsterdamUseCase>();
 
-                await GetTopAmsterdamMakelaars(useCase);
+                await GetTopAmsterdamMakelaars(allListingsUseCase);
+                
+                Console.WriteLine();
+                Console.WriteLine();
+                
+                
+                var listingsWithTuinUseCase = scope.ServiceProvider.GetService<GetTop10AmsterdamMakelaarsWithTuinUseCase>();
+
+                await GetTopAmsterdamMakelaarsWithTuin(listingsWithTuinUseCase);
             }
 
             Console.ReadLine();
@@ -39,6 +48,16 @@ namespace FundaConsoleHost
         private static async Task GetTopAmsterdamMakelaars(GetTop10MakelaarsInAmsterdamUseCase useCase)
         {
             IEnumerable<Tuple<Makelaar, int>> results = await useCase.Execute();
+            PrintRow("Top Amsterdam makelaars");
+            PrintLine();
+            PrintResults(results);
+        }
+
+        private static async Task GetTopAmsterdamMakelaarsWithTuin(GetTop10AmsterdamMakelaarsWithTuinUseCase useCase)
+        {
+            IEnumerable<Tuple<Makelaar, int>> results = await useCase.Execute();
+            PrintRow("Top Amsterdam  makelaars with listings with tuin");
+            PrintLine();
             PrintResults(results);
         }
 
