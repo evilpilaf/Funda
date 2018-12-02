@@ -18,7 +18,7 @@ namespace FundaConsoleHost
     {
         static async Task Main(string[] args)
         {
-            var log = new LoggerConfiguration().WriteTo.ColoredConsole(LogEventLevel.Debug).CreateLogger();
+            var log = new LoggerConfiguration().WriteTo.ColoredConsole(LogEventLevel.Warning).CreateLogger();
 
             ServiceProvider serviceProvider = new ServiceCollection()
                                               .AddLogging(logginBuilder => logginBuilder.AddSerilog(log))
