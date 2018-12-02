@@ -30,15 +30,55 @@ namespace FundaConsoleHost
             {
                 var useCase = scope.ServiceProvider.GetService<GetTop10MakelaarsInAmsterdamUseCase>();
 
-                IEnumerable<Makelaar> result = await useCase.Execute();
+                IEnumerable<Tuple<Makelaar, int>> results = await useCase.Execute();
+                
+                PrintLine();
+                PrintRow("Makelaar name", "Total listings");
 
-                foreach (Makelaar m in result)
+                foreach (var result in results)
                 {
-                    Console.WriteLine($"{m.Id} - {m.Name}");
+                    PrintLine();
+                    PrintRow(result.Item1.Name, result.Item2.ToString());
                 }
+                
+                PrintLine();
             }
 
             Console.ReadLine();
+        }
+        
+        static int tableWidth = 77;
+
+        static void PrintLine()
+        {
+            Console.WriteLine(new string('-', tableWidth));
+        }
+
+        static void PrintRow(params string[] columns)
+        {
+            int width = (tableWidth - columns.Length) / columns.Length;
+            string row = "|";
+
+            foreach (string column in columns)
+            {
+                row += AlignCentre(column, width) + "|";
+            }
+
+            Console.WriteLine(row);
+        }
+
+        static string AlignCentre(string text, int width)
+        {
+            text = text.Length > width ? text.Substring(0, width - 3) + "..." : text;
+
+            if (string.IsNullOrEmpty(text))
+            {
+                return new string(' ', width);
+            }
+            else
+            {
+                return text.PadRight(width - (width - text.Length) / 2).PadLeft(width);
+            }
         }
     }
 }

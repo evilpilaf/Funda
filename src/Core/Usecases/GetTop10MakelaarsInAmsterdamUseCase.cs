@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Funda.Core.Usecases
             _fundaApiService = fundaApiService;
         }
 
-        public async Task<IEnumerable<Makelaar>> Execute()
+        public async Task<IEnumerable<Tuple<Makelaar, int>>> Execute()
         {
             IEnumerable<Listing> listings = await _fundaApiService.GetAllListings();
 
@@ -28,7 +29,7 @@ namespace Funda.Core.Usecases
                            })
                            .OrderByDescending(r => r.TotalListings)
                            .Take(10)
-                           .Select(g => g.Makelaar);
+                           .Select(g => new Tuple<Makelaar, int>(g.Makelaar, g.TotalListings));
         }
     }
 }

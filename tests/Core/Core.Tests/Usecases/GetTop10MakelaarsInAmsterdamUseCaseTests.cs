@@ -35,13 +35,13 @@ namespace Core.Tests.Usecases
 
             GetTop10MakelaarsInAmsterdamUseCase sut = CreateSut();
 
-            IEnumerable<Makelaar> result = await sut.Execute();
+            IEnumerable<Tuple<Makelaar, int>> result = await sut.Execute();
 
-            result.Should().ContainSingle().Which.Should().Be(makelaarOne);
+            result.Should().ContainSingle().Which.Should().BeEquivalentTo(new Tuple<Makelaar, int>(makelaarOne, 40));
         }
 
         [Theory]
-        [InlineData(new[] {10, 80, 200, 500, 54, 1000, 23, 57, 1231, 345321, 1, 23, 786})]
+        [InlineData(new[] {10, 80, 200, 500, 54, 1000, 23, 57, 1231, 345321, 1, 25, 786})]
         [InlineData(new[] {30, 45, 23, 12})]
         [InlineData(new[] {46, 7, 12, 100, 3, 55, 8})]
         public async Task Execute_WhenServiceCallSucceeded_WithMoreThan10Makelaars_ReturnsOnlyTop10Sorted(int[] listingsPerMakelaar)
@@ -56,16 +56,16 @@ namespace Core.Tests.Usecases
                 makelaars[numberOfListings] = buildResult.Item1;
             }
 
-            IEnumerable<Makelaar> sortedMakelaars = makelaars.OrderByDescending(m => m.Key)
-                                                             .Take(10)
-                                                             .Select(m => m.Value);
+            IEnumerable<Tuple<Makelaar, int>> sortedMakelaars = makelaars.OrderByDescending(m => m.Key)
+                                                                         .Take(10)
+                                                                         .Select(m => new Tuple<Makelaar, int>(m.Value, m.Key));
 
             _fundaApiServiceMock.Setup(m => m.GetAllListings())
                                 .ReturnsAsync(listings);
 
             GetTop10MakelaarsInAmsterdamUseCase sut = CreateSut();
 
-            IEnumerable<Makelaar> result = await sut.Execute();
+            var result = await sut.Execute();
 
             result.Should().HaveCountLessOrEqualTo(10);
             result.Should().ContainInOrder(sortedMakelaars);
