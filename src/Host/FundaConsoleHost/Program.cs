@@ -14,9 +14,9 @@ using Serilog.Events;
 
 namespace FundaConsoleHost
 {
-    class Program
+    internal class Program
     {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
             var log = new LoggerConfiguration().WriteTo.ColoredConsole(LogEventLevel.Warning).CreateLogger();
 
@@ -30,33 +30,42 @@ namespace FundaConsoleHost
             {
                 var useCase = scope.ServiceProvider.GetService<GetTop10MakelaarsInAmsterdamUseCase>();
 
-                IEnumerable<Tuple<Makelaar, int>> results = await useCase.Execute();
-                
-                PrintLine();
-                PrintRow("Makelaar name", "Total listings");
-
-                foreach (var result in results)
-                {
-                    PrintLine();
-                    PrintRow(result.Item1.Name, result.Item2.ToString());
-                }
-                
-                PrintLine();
+                await GetTopAmsterdamMakelaars(useCase);
             }
 
             Console.ReadLine();
         }
-        
-        static int tableWidth = 77;
 
-        static void PrintLine()
+        private static async Task GetTopAmsterdamMakelaars(GetTop10MakelaarsInAmsterdamUseCase useCase)
         {
-            Console.WriteLine(new string('-', tableWidth));
+            IEnumerable<Tuple<Makelaar, int>> results = await useCase.Execute();
+            PrintResults(results);
         }
 
-        static void PrintRow(params string[] columns)
+        private static void PrintResults(IEnumerable<Tuple<Makelaar,int>> results)
         {
-            int width = (tableWidth - columns.Length) / columns.Length;
+            PrintLine();
+            PrintRow("Makelaar name", "Total listings");
+
+            foreach (var result in results)
+            {
+                PrintLine();
+                PrintRow(result.Item1.Name, result.Item2.ToString());
+            }
+                
+            PrintLine();
+        }
+
+        private const int _tableWidth = 77;
+
+        private static void PrintLine()
+        {
+            Console.WriteLine(new string('-', _tableWidth));
+        }
+
+        private static void PrintRow(params string[] columns)
+        {
+            int width = (_tableWidth - columns.Length) / columns.Length;
             string row = "|";
 
             foreach (string column in columns)
@@ -67,7 +76,7 @@ namespace FundaConsoleHost
             Console.WriteLine(row);
         }
 
-        static string AlignCentre(string text, int width)
+        private static string AlignCentre(string text, int width)
         {
             text = text.Length > width ? text.Substring(0, width - 3) + "..." : text;
 
