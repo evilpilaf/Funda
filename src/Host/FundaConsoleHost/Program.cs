@@ -48,21 +48,19 @@ namespace FundaConsoleHost
         private static async Task GetTopAmsterdamMakelaars(GetTop10MakelaarsInAmsterdamUseCase useCase)
         {
             IEnumerable<Tuple<Makelaar, int>> results = await useCase.Execute();
-            PrintRow("Top Amsterdam makelaars");
-            PrintLine();
-            PrintResults(results);
+            PrintResults("Top Amsterdam makelaars", results);
         }
 
         private static async Task GetTopAmsterdamMakelaarsWithTuin(GetTop10AmsterdamMakelaarsWithTuinUseCase useCase)
         {
             IEnumerable<Tuple<Makelaar, int>> results = await useCase.Execute();
-            PrintRow("Top Amsterdam  makelaars with listings with tuin");
-            PrintLine();
-            PrintResults(results);
+            PrintResults("Top Amsterdam  makelaars with listings with tuin", results);
         }
 
-        private static void PrintResults(IEnumerable<Tuple<Makelaar,int>> results)
+        private static void PrintResults(string title, IEnumerable<Tuple<Makelaar,int>> results)
         {
+            PrintRow(title);
+            PrintLine();
             PrintLine();
             PrintRow("Makelaar name", "Total listings");
 
