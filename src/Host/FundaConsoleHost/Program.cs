@@ -21,7 +21,7 @@ namespace FundaConsoleHost
             var log = new LoggerConfiguration().WriteTo.ColoredConsole(LogEventLevel.Warning).CreateLogger();
 
             ServiceProvider serviceProvider = new ServiceCollection()
-                                              .AddLogging(logginBuilder => logginBuilder.AddSerilog(log))
+                                              .AddLogging(loggingBuilder => loggingBuilder.AddSerilog(log))
                                               .AddScoped<GetTop10MakelaarsInAmsterdamUseCase>()
                                               .RegisterWebApiServiceAdapter()
                                               .BuildServiceProvider();
